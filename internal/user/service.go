@@ -1,5 +1,10 @@
 package user
 
+import (
+	"context"
+	"net/http"
+)
+
 type UserCreateRequest struct {
 	Email          string `json:"email"`
 	Username       string `json:"username"`
