@@ -60,10 +60,10 @@ type UserService interface {
 }
 
 type UserServiceImpl struct {
-	Repository
+	Repository UserRepositoryImpl
 }
 
-func NewUserService(userRepository *UserRepository) UserService {
+func NewUserService(userRepository UserRepositoryImpl) UserService {
 	return &UserServiceImpl{
 		Repository: userRepository,
 	}
