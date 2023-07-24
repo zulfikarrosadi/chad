@@ -1,24 +1,30 @@
 package db
 
 import (
-	"context"
+	"database/sql"
 	"log"
 	"os"
+	"time"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
-func GetConnection() *pgxpool.Pool {
+func GetConnection() *sql.DB {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("cannot load .env file")
+		log.Fatal("cannot load .env file", err)
 	}
 	dbURI := os.Getenv("DB_URI")
-	p, err2 := pgxpool.New(context.Background(), dbURI)
-	if err2 != nil {
-		panic(err2)
+	d, err := sql.Open("postgres", dbURI)
+	if err != nil {
+		log.Fatal("cannot connect to db", err)
 	}
 
-	return p
+	d.SetMaxIdleConns(10)
+	d.SetMaxOpenConns(25)
+	d.SetConnMaxIdleTime(2 * time.Minute)
+	d.SetConnMaxLifetime(15 * time.Minute)
+
+	return d
 }
